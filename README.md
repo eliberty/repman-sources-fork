@@ -1,5 +1,39 @@
 # Repman - PHP Repository Manager
 
+> ## Eliberty fork
+>
+> This repository is Eliberty's fork of [Softizy/repman](https://github.com/Softizy/repman),
+> itself a maintained fork of the original [repman-io/repman](https://github.com/repman-io/repman).
+> We build the Docker image from this fork (PHP 7.4.33 patched against PHP2Shell, Google OAuth login,
+> Softizy deployment config) and push it to our **private AWS ECR** registry. The upstream Docker Hub
+> image (`buddy/repman`) is not used.
+>
+> ### Build and push the image to ECR
+>
+> Prerequisites: Docker, AWS CLI with credentials able to push to the target repository, and an
+> existing private ECR repository.
+>
+> ```bash
+> cp ecr.env.dist ecr.env   # then edit it (ecr.env is git-ignored)
+> make push
+> ```
+>
+> `ecr.env` settings:
+>
+> | Variable | Description | Default |
+> |---|---|---|
+> | `AWS_ACCOUNT_ID` | AWS account hosting the ECR registry (required) | |
+> | `ECR_REPOSITORY` | ECR repository name, must already exist (required) | |
+> | `AWS_REGION` | AWS region of the registry | `eu-west-3` |
+> | `AWS_PROFILE` | AWS CLI profile | default credentials |
+> | `IMAGE_TAG` | Tag pushed in addition to `latest` | short git SHA |
+> | `PLATFORM` | Target platform | `linux/amd64` |
+>
+> Make targets: `make build`, `make login`, `make push` (build + login + push), `make help`.
+> The image is pushed as `<AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/<ECR_REPOSITORY>:<IMAGE_TAG>`
+> and `:latest`. If Docker uses the `ecr-login` credential helper, `make login` is a no-op and
+> authentication happens on push.
+
 [![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.4-8892BF.svg)](https://php.net/)
 [![Uptime Robot ratio (24h)](https://badgen.net/uptime-robot/day/m784813562-93c7dab381e24ccdb679c5d2)](https://stats.uptimerobot.com/QAMQli6XQM)
 [![buddy pipeline](https://app.buddy.works/repman/repman/pipelines/pipeline/244549/badge.svg?token=ac6f2fe807ba6b7ad90902f5bda1c1fb8445014757f82e1867f2cad2fd612035 "buddy pipeline")](https://app.buddy.works/repman/repman/pipelines/pipeline/244549)
